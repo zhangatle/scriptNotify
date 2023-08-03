@@ -1,0 +1,28 @@
+name: 劲酒库存提醒
+on:
+    workflow_dispatch:
+    schedule:
+        - cron: "* * * * *"
+    watch:
+        types: [started]
+
+jobs:
+    build:
+        runs-on: ubuntu-latest
+        timeout-minutes: 3
+        steps:
+            - name: checkout actions
+              uses: actions/checkout@v3
+            - name: set up python 3.9
+              uses: actions/setup-python@v4
+              with:
+                  python-version: 3.9
+            - name: "安装依赖"
+              run: |
+                  pip install --upgrade pip
+                  pip install -r ./requirements.txt
+            - name: "运行 劲酒库存监测"
+              run: |
+                  python function/jinjiu.py
+              env:
+                  JINJIU_TOKEN: ${{ secrets.JINJIU_TOKEN }}
